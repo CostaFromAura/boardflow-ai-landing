@@ -1,103 +1,152 @@
+"use client";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import FeaturesSection from "@/components/ui/FeaturesSection";
+import PinnedFAQSection from "@/components/ui/PinnedFAQSection";
+import WaitlistSection from "@/components/ui/WaitlistSection";
+import CleanFooter from "@/components/ui/CleanFooter";
+import { Badge } from "@/components/ui/badge";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className="min-h-screen bg-black text-white w-full scroll-smooth">
+      {/* Header */}
+      <header>
+        <div className="w-full px-6 py-4">
+          <nav className="flex items-center justify-between">
+            <div className="flex items-center -space-x-1">
+              <Image 
+                src="/boardflowlogo.svg" 
+                alt="BoardFlow.ai Logo" 
+                width={48} 
+                height={48}
+                className="w-12 h-12"
+              />
+              <span className="text-xl font-bold">BoardFlow.ai</span>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
+              <a href="#features" className="text-gray-300 hover:text-white transition-colors font-medium">
+                Features
+              </a>
+              <a href="#ipad" className="text-gray-300 hover:text-white transition-colors font-medium">
+                Demo
+              </a>
+              <a href="#faq" className="text-gray-300 hover:text-white transition-colors font-medium">
+                FAQ
+              </a>
+              <a href="#waitlist" className="text-gray-300 hover:text-white transition-colors font-medium">
+                Waitlist
+              </a>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" className="text-gray-300 hover:text-white font-semibold">
+                Download
+              </Button>
+              <Button className="bg-[#1A1A1A] hover:bg-blue-700 font-semibold">Try for free</Button>
+            </div>
+          </nav>
+        </div>
+      </header>
+      
+      {/* Hero Section */}
+      <main className="w-full px-6 py-10">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="mb-6 flex justify-center">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/buildingbadge.svg"
+              alt="Building phase"
+              width={180}
+              height={40}
+              className="h-10 w-auto"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight text-center">
+            Capture your thinking.<br />
+            Watch it{" "}
+            <span className="relative inline-block">
+              <span className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-r from-blue-700 to-purple-600 px-2 transform"></span>
+              <span className="relative text-white font-bold">
+                evolve
+              </span>
+            </span>{" "}
+            with AI.
+          </h1>
+          
+          <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-medium">
+            An intelligent whiteboard that helps you think, learn, and connect ideas.
+          </p>
+          
+          {/* Email Signup */}
+          <div className="flex justify-center items-center max-w-md mx-auto">
+            <div className="relative w-full bg-gray-900 border border-gray-700 rounded-full p-1">
+              <Input
+                type="email"
+                placeholder="Your Email..."
+                className="bg-transparent border-0 text-white placeholder-gray-400 pr-24 rounded-full focus:ring-0 focus:outline-none"
+              />
+              <Button className="absolute right-1 top-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-bold rounded-full px-6 py-2">
+                Waitlist
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Demo Screenshot */}
+        <div id="demo" className="w-full mt-10">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+            <Image
+              src="/demo-screenshot.svg"
+              alt="BoardFlow.ai interface showing MVP Planning Board with tasks and roadmap"
+              width={1200}
+              height={800}
+              className="w-full h-auto rounded-lg shadow-2xl"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Features Section */}
+        <div id="features" className="container mx-auto mt-14 px-6">
+          <FeaturesSection />
+        </div>
+
+        {/* iPad Screenshot */}
+        <div id="ipad" className="w-full mt-20">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+            <div className="flex justify-center">
+              <Image
+                src="/ipad.svg"
+                alt="BoardFlow.ai Calculus Board Screenshot"
+                width={1200}
+                height={800}
+                className="w-full h-auto max-w-7xl rounded-lg shadow-2xl"
+                priority
+              />
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      {/* FAQ Section */}
+      <div id="faq" className="mt-14">
+        <PinnedFAQSection />
+      </div>
+      
+      {/* Waitlist Section */}
+      <div id="waitlist" className="mt-14">
+        <WaitlistSection />
+      </div>
+
+      {/* Footer */}
+      <div className="mt-10">
+        <CleanFooter />
+      </div>
     </div>
   );
 }
