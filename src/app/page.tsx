@@ -1,4 +1,6 @@
 "use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,9 +8,10 @@ import FeaturesSection from "@/components/ui/FeaturesSection";
 import PinnedFAQSection from "@/components/ui/PinnedFAQSection";
 import WaitlistSection from "@/components/ui/WaitlistSection";
 import CleanFooter from "@/components/ui/CleanFooter";
-import { Badge } from "@/components/ui/badge";
 
 export default function LandingPage() {
+  const [sharedEmail, setSharedEmail] = useState("");
+
   return (
     <div className="min-h-screen bg-black text-white w-full scroll-smooth">
       {/* Header */}
@@ -25,32 +28,26 @@ export default function LandingPage() {
               />
               <span className="text-xl font-bold">BoardFlow.ai</span>
             </div>
-            
+
             <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
-              <a href="#features" className="text-gray-300 hover:text-white transition-colors font-medium">
-                Features
-              </a>
-              <a href="#ipad" className="text-gray-300 hover:text-white transition-colors font-medium">
-                Demo
-              </a>
-              <a href="#faq" className="text-gray-300 hover:text-white transition-colors font-medium">
-                FAQ
-              </a>
-              <a href="#waitlist" className="text-gray-300 hover:text-white transition-colors font-medium">
-                Waitlist
-              </a>
+              <a href="#features" className="text-gray-300 hover:text-white font-medium">Features</a>
+              <a href="#ipad" className="text-gray-300 hover:text-white font-medium">Demo</a>
+              <a href="#faq" className="text-gray-300 hover:text-white font-medium">FAQ</a>
+              <a href="#waitlist" className="text-gray-300 hover:text-white font-medium">Waitlist</a>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <Button variant="ghost" className="text-gray-300 hover:text-white font-semibold">
                 Download
               </Button>
-              <Button className="bg-[#1A1A1A] hover:bg-blue-700 font-semibold">Try for free</Button>
+              <Button className="bg-[#1A1A1A] hover:bg-blue-700 font-semibold">
+                Try for free
+              </Button>
             </div>
           </nav>
         </div>
       </header>
-      
+
       {/* Hero Section */}
       <main className="w-full px-6 py-10">
         <div className="text-center max-w-4xl mx-auto">
@@ -63,7 +60,7 @@ export default function LandingPage() {
               className="h-10 w-auto"
             />
           </div>
-          
+
           <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight text-center">
             Capture your thinking.<br />
             Watch it{" "}
@@ -75,22 +72,26 @@ export default function LandingPage() {
             </span>{" "}
             with AI.
           </h1>
-          
+
           <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-medium">
             An intelligent whiteboard that helps you think, learn, and connect ideas.
           </p>
-          
+
           {/* Email Signup */}
           <div className="flex justify-center items-center max-w-md mx-auto">
             <div className="relative w-full bg-gray-900 border border-gray-700 rounded-full p-1">
               <Input
                 type="email"
                 placeholder="Your Email..."
+                value={sharedEmail}
+                onChange={(e) => setSharedEmail(e.target.value)}
                 className="bg-transparent border-0 text-white placeholder-gray-400 pr-24 rounded-full focus:ring-0 focus:outline-none"
               />
-              <Button className="absolute right-1 top-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-bold rounded-full px-6 py-2">
-                Waitlist
-              </Button>
+              <a href="#waitlist">
+                <Button className="absolute right-1 top-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-bold rounded-full px-6 py-2">
+                  Waitlist
+                </Button>
+              </a>
             </div>
           </div>
         </div>
@@ -110,12 +111,12 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Features Section */}
+        {/* Features */}
         <div id="features" className="container mx-auto mt-14 px-6">
           <FeaturesSection />
         </div>
 
-        {/* iPad Screenshot */}
+        {/* iPad */}
         <div id="ipad" className="w-full mt-20">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
@@ -131,22 +132,22 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+
+        {/* FAQ */}
+        <div id="faq" className="mt-14">
+          <PinnedFAQSection />
+        </div>
+
+        {/* Waitlist */}
+        <div id="waitlist" className="mt-14">
+          <WaitlistSection sharedEmail={sharedEmail} />
+        </div>
+
+        {/* Footer */}
+        <div className="mt-10">
+          <CleanFooter />
+        </div>
       </main>
-
-      {/* FAQ Section */}
-      <div id="faq" className="mt-14">
-        <PinnedFAQSection />
-      </div>
-      
-      {/* Waitlist Section */}
-      <div id="waitlist" className="mt-14">
-        <WaitlistSection />
-      </div>
-
-      {/* Footer */}
-      <div className="mt-10">
-        <CleanFooter />
-      </div>
     </div>
   );
 }
