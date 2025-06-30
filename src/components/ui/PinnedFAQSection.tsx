@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HelpCircle, MessageCircle, Shield } from "lucide-react";
 
 export default function PinnedFAQSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const faqs = [
     {
@@ -27,7 +28,23 @@ export default function PinnedFAQSection() {
     },
   ];
 
+  // Detecta se é mobile/tablet
   useEffect(() => {
+    function checkMobile() {
+      setIsMobile(window.innerWidth < 1024); // breakpoint lg do Tailwind
+    }
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      // No mobile/tablet, reseta transform e não adiciona listener
+      if (cardsRef.current) cardsRef.current.style.transform = "none";
+      return;
+    }
+
     const container = containerRef.current;
     const cards = cardsRef.current;
     if (!container || !cards) return;
@@ -39,7 +56,7 @@ export default function PinnedFAQSection() {
       const windowHeight = window.innerHeight;
 
       const CARD_HEIGHT = windowHeight * 0.8;
-      const CARD_SPACING = windowHeight * 0.01; // 🔽 ainda menor
+      const CARD_SPACING = windowHeight * 0.01;
       const TOTAL_CARD_HEIGHT = CARD_HEIGHT + CARD_SPACING;
 
       if (containerTop <= 0 && containerTop > -(containerHeight - windowHeight)) {
@@ -59,34 +76,44 @@ export default function PinnedFAQSection() {
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMobile]);
 
   return (
     <div
       ref={containerRef}
       className="relative bg-black"
-      style={{ height: `${(faqs.length - 1) * 100 + 100}vh` }}
+      style={{ height: isMobile ? "auto" : `${(faqs.length - 1) * 100 + 100}vh` }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="flex h-full">
-          {/* Lado esquerdo fixo */}
-          <div className="w-1/2 flex items-center justify-center p-12 bg-gradient-to-br from-gray-900 to-black">
-            <div className="max-w-lg">
-              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-white">
+      <div className={`sticky top-0 h-screen overflow-hidden ${isMobile ? "relative h-auto overflow-visible" : ""}`}>
+        <div className={`flex ${isMobile ? "flex-col" : ""} h-full`}>
+          {/* Lado esquerdo fixo - Responsive */}
+          <div
+            className={`${
+              isMobile 
+                ? "w-full p-4 sm:p-6 md:p-8" 
+                : "w-1/2 p-8 xl:p-12"
+            } flex items-center justify-center bg-gradient-to-br from-gray-900 to-black`}
+          >
+            <div className="max-w-lg w-full">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-6 md:mb-8 leading-tight text-white">
                 Questions?
                 <br />
                 <span className="bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
                   We've got answers.
                 </span>
               </h2>
-              <p className="text-xl text-gray-300 leading-relaxed mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed mb-6 md:mb-8">
                 Everything you need to know about BoardFlow.ai and how it can transform your thinking process.
               </p>
             </div>
           </div>
 
-          {/* Lado direito - Cards com scroll controlado */}
-          <div className="w-1/2 h-full overflow-hidden relative bg-black">
+          {/* Lado direito - Cards com scroll controlado - Responsive */}
+          <div className={`${
+            isMobile 
+              ? "w-full h-auto overflow-visible mt-4 px-4 sm:px-6 md:px-8" 
+              : "w-1/2 h-full overflow-hidden"
+          } relative bg-black`}>
             <div
               ref={cardsRef}
               className="flex flex-col transition-transform duration-300 ease-out"
@@ -97,23 +124,23 @@ export default function PinnedFAQSection() {
                 return (
                   <div
                     key={index}
-                    className="flex-shrink-0 flex items-center justify-center p-8 relative"
+                    className="flex-shrink-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative"
                     style={{
-                      height: "80vh",
-                      marginBottom: "1vh", // 🔽 distância menor
+                      height: isMobile ? "auto" : "80vh",
+                      marginBottom: isMobile ? "1.5rem" : "1vh",
                     }}
                   >
-                    <div className="group max-w-lg bg-white/95 backdrop-blur-sm text-black p-8 rounded-3xl hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 hover:text-white transition-all duration-700 hover:scale-110 shadow-2xl hover:shadow-blue-500/25 border border-gray-200/20">
-                      <div className="rounded-full w-16 h-16 flex items-center justify-center border-2 border-gray-300 group-hover:border-white mb-6 group-hover:scale-110 transition-all duration-500 bg-white/10 group-hover:bg-white/20">
+                    <div className="group w-full max-w-sm sm:max-w-md lg:max-w-lg bg-white/95 backdrop-blur-sm text-black p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 hover:text-white transition-all duration-700 hover:scale-105 lg:hover:scale-110 shadow-2xl hover:shadow-blue-500/25 border border-gray-200/20">
+                      <div className="rounded-full w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 flex items-center justify-center border-2 border-gray-300 group-hover:border-white mb-4 sm:mb-5 lg:mb-6 group-hover:scale-110 transition-all duration-500 bg-white/10 group-hover:bg-white/20">
                         <IconComponent
-                          size={28}
+                          size={isMobile ? 24 : 28}
                           className="text-gray-700 group-hover:text-white transition-colors duration-500"
                         />
                       </div>
-                      <h3 className="text-2xl font-bold mb-6 text-black group-hover:text-white transition-colors duration-500 leading-tight">
+                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-4 sm:mb-5 lg:mb-6 text-black group-hover:text-white transition-colors duration-500 leading-tight">
                         {faq.question}
                       </h3>
-                      <p className="text-gray-600 text-base leading-relaxed group-hover:text-gray-100 transition-colors duration-500">
+                      <p className="text-gray-600 text-sm sm:text-base leading-relaxed group-hover:text-gray-100 transition-colors duration-500">
                         {faq.answer}
                       </p>
                     </div>
