@@ -122,7 +122,6 @@ export default function WaitlistSection({
     role: "",
   });
 
-  // Update email whenever sharedEmail changes
   useEffect(() => {
     if (sharedEmail) {
       setFormData((prev) => ({ ...prev, email: sharedEmail }));
@@ -149,7 +148,7 @@ export default function WaitlistSection({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: formData.email }),
+        body: JSON.stringify(formData), // ✅ envia todos os dados
       });
 
       const result = await res.json();
@@ -178,7 +177,6 @@ export default function WaitlistSection({
 
       <section className="bg-black text-white w-full relative">
         <div className="grid md:grid-cols-2 gap-12 py-24">
-          {/* Left - Form */}
           <div className="space-y-6 px-6 max-w-lg w-full mx-auto flex flex-col justify-center">
             <Image
               src="/boardflowlogo.svg"
@@ -255,7 +253,6 @@ export default function WaitlistSection({
             </form>
           </div>
 
-          {/* Right - Image */}
           <div className="relative w-full">
             <Image
               src="/boardflow-beta-mockup.svg"

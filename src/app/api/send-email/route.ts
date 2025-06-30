@@ -2,8 +2,21 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import fs from "fs";
 import path from "path";
+import { google } from "googleapis";
+import { JWT } from "google-auth-library";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const DATA_FILE = path.resolve(process.cwd(), "data", "submissions.json");
+
+const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
+const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
+const SHEET_NAME = "Submissions";
+
+const auth = new JWT({
+  email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+  key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+  scopes: SCOPES,
+});
 
 export async function POST(req: Request) {
   console.log("🚀 API route called");
@@ -12,20 +25,14 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log("📧 Request body:", body);
 
-    const { email } = body;
-
-    // Check if API key exists
-    console.log("🔑 API Key exists:", !!process.env.RESEND_API_KEY);
-    console.log("🔑 API Key preview:", process.env.RESEND_API_KEY?.substring(0, 10) + "...");
+    const { name, email, referral, role } = body;
 
     if (!email) {
-      console.log("❌ No email provided");
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     // 🔄 Lê o HTML do template
     const templatePath = path.resolve(process.cwd(), "templates", "thank-you-email.html");
-
     let htmlContent = "";
 
     try {
@@ -35,8 +42,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Failed to load email template." }, { status: 500 });
     }
 
-    console.log("📤 Attempting to send email to:", email);
-
+    // ✉️ Envia o e-mail
     const data = await resend.emails.send({
       from: "BoardFlow.ai <hello@timeaura.com.br>",
       to: [email],
@@ -45,22 +51,56 @@ export async function POST(req: Request) {
     });
 
     if (data.error) {
-      console.log("🚨 Resend returned an error:", data.error);
       throw new Error(data.error.message || "Email sending failed");
     }
 
-    console.log("✅ Email sent successfully:", data);
+    console.log("✅ Email sent successfully to:", email);
+
+    const submission = {
+      name,
+      email,
+      referral,
+      role,
+      date: new Date().toISOString(),
+    };
+
+    // ✅ Salva no Google Sheets
+    const sheets = google.sheets({ version: "v4", auth });
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: `${SHEET_NAME}!A:E`,
+      valueInputOption: "RAW",
+      requestBody: {
+        values: [[submission.date, submission.name, submission.email, submission.referral, submission.role]],
+      },
+    });
+
+    // 📝 Também salva localmente (backup)
+    const dataDir = path.dirname(DATA_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    let currentData: any[] = [];
+    if (fs.existsSync(DATA_FILE)) {
+      const fileContents = fs.readFileSync(DATA_FILE, "utf8");
+      try {
+        currentData = JSON.parse(fileContents);
+      } catch {
+        currentData = [];
+      }
+    }
+
+    currentData.push(submission);
+    fs.writeFileSync(DATA_FILE, JSON.stringify(currentData, null, 2));
 
     return NextResponse.json({
       success: true,
-      data: data.data,
-      message: "Email sent successfully",
+      message: "Email sent and data stored (local + sheets).",
     });
 
   } catch (error) {
-    console.error("❌ Detailed error:", error);
-
-    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     const errorDetails = error instanceof Error ? error.stack : String(error);
 
     return NextResponse.json(
